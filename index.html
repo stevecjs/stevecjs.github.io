@@ -33,6 +33,11 @@
     .btn-icon-text { font-size: 0.8rem; padding: 6px 12px; border-radius: 8px; }
     .category-header { padding: 25px; background: white; margin-bottom: 20px; border-radius: 0 0 25px 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
     .form-control:focus { box-shadow: none; border-color: #bdc3c7; }
+    
+    /* 目標輸入框的儲存狀態樣式 */
+    .goal-textarea { transition: border-color 0.3s, background-color 0.3s; border: 1px solid transparent; }
+    .goal-textarea.saving { border-color: #f1c40f !important; background-color: #fff9db !important; }
+    .goal-textarea.saved { border-color: #2ecc71 !important; background-color: #eafaf1 !important; }
 
     /* 讀取與登入遮罩 */
     #loading, #login-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.98); z-index:9999; display:flex; justify-content:center; align-items:center; flex-direction: column;}
@@ -160,7 +165,7 @@
 
 <script>
   // ===========================================
-  // 設定區 (已填入你的資料)
+  // 設定區
   // ===========================================
   const API_URL = "https://script.google.com/macros/s/AKfycbxAScOvdlhsnm6imsHNlVtJgFVwbhbvKszVbPmp1zhfAL6eta8zs_hfMnxAEBTr8AU-Sg/exec"; 
   // ===========================================
@@ -221,7 +226,6 @@
 
   async function loadData() {
     document.getElementById('loading').style.display = 'flex';
-    // 前端發送 getData 請求
     const res = await callApi('getData');
     if (res) { allData = res.items || []; renderContent(); }
     document.getElementById('loading').style.display = 'none';
@@ -273,10 +277,12 @@
     let goal = allData.find(d => d.category === currentCategory && d.type === 'Goal')?.content || '';
     let headerIcon = currentCategory === 'Home' ? 'fa-earth-americas' : catInfo.icon;
     
+    // 這裡加上了 class "goal-textarea" 以便控制儲存時的顏色變化
     let headerHtml = `
       <div class="category-header">
         <h4 class="mb-4 text-dark fw-bolder"><i class="fa-solid ${headerIcon} me-3 text-primary"></i>${catInfo.name}目標</h4>
-        <textarea class="form-control border-0 bg-light shadow-sm p-4" rows="3" style="border-radius: 15px; resize: none; font-size: 1.1rem;" placeholder="寫下此領域最重要的目標與願景..." onblur="saveTopGoal(this)">${goal}</textarea>
+        <textarea class="form-control goal-textarea bg-light shadow-sm p-4" rows="3" style="border-radius: 15px; resize: none; font-size: 1.1rem;" placeholder="寫下此領域最重要的目標與願景..." onblur="saveTopGoal(this)">${goal}</textarea>
+        <div class="text-end mt-1"><small class="text-muted" id="save-status-text" style="opacity:0; transition: opacity 0.3s;">已儲存</small></div>
       </div>`;
     container.innerHTML = headerHtml;
 
@@ -338,7 +344,31 @@
     if(sortable) new Sortable(el, { handle: '.drag-handle', animation: 150, ghostClass: 'bg-light', onEnd: saveOrder });
   }
 
-  async function saveTopGoal(el) { await callApi('saveTopGoal', { category: currentCategory, content: el.value }); }
+  // --- 修正後的目標儲存功能 ---
+  async function saveTopGoal(el) { 
+    // 1. 視覺回饋：變黃色
+    el.classList.add('saving');
+    
+    // 2. 呼叫 API
+    const res = await callApi('saveTopGoal', { category: currentCategory, content: el.value }); 
+    
+    // 3. 處理結果
+    if(res) {
+        allData = res.items; // 關鍵：更新本地資料，這樣切換頁面文字才不會不見
+        
+        // 視覺回饋：變綠色 + 顯示「已儲存」
+        el.classList.remove('saving');
+        el.classList.add('saved');
+        document.getElementById('save-status-text').style.opacity = '1';
+        
+        // 1秒後恢復原狀
+        setTimeout(() => {
+            el.classList.remove('saved');
+            document.getElementById('save-status-text').style.opacity = '0';
+        }, 1500);
+    }
+  }
+
   async function updateField(id, field, val) {
     let item = allData.find(d => d.id == id); if(item) { item[field] = val; renderContent(); }
     const res = await callApi('updateItem', { id: id, field: field, value: val }); if(res) allData = res.items;
