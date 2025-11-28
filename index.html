@@ -16,7 +16,6 @@
     }
     body { background-color: var(--bg-light); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-user-select: none; user-select: none; overflow-x: hidden;}
     
-    /* 通用樣式 */
     .card { border: none; box-shadow: 0 2px 6px rgba(0,0,0,0.04); margin-bottom: 12px; border-radius: 12px; transition: transform 0.15s ease; }
     .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
     .item-row { padding: 15px; background: white; }
@@ -29,31 +28,12 @@
     .strikethrough { text-decoration: line-through; color: #bdc3c7; }
     .opacity-50 { opacity: 0.5; }
     
-    /* --- 優化後的天數與按鈕樣式 --- */
-    .days-badge { 
-        font-size: 0.9rem; /* 字體放大 */
-        padding: 6px 14px; /* 按鈕加大 */
-        border-radius: 20px; 
-        background: #ecf0f1; 
-        color: #7f8c8d; 
-        font-weight: 600; 
-        display: inline-flex; 
-        align-items: center;
-        margin-right: 10px;
-    }
-    .days-badge.overdue { background: #fadbd8; color: #c0392b; } /* 過期很久 (紅) */
-    .days-badge.future { background: #e8f6f3; color: #16a085; } /* 未來 (藍綠) */
-    .days-badge.today { background: #d4efdf; color: #27ae60; } /* 今天 (綠) */
+    .days-badge { font-size: 0.9rem; padding: 6px 14px; border-radius: 20px; background: #ecf0f1; color: #7f8c8d; font-weight: 600; display: inline-flex; align-items: center; margin-right: 10px;}
+    .days-badge.overdue { background: #fadbd8; color: #c0392b; }
+    .days-badge.future { background: #e8f6f3; color: #16a085; }
+    .days-badge.today { background: #d4efdf; color: #27ae60; }
     
-    .btn-reset {
-        font-size: 0.9rem; /* 字體放大 */
-        padding: 6px 14px; /* 按鈕加大 */
-        border-radius: 20px;
-        background-color: #f0fdf4;
-        color: #27ae60;
-        border: 1px solid #dcfce7;
-        transition: all 0.2s;
-    }
+    .btn-reset { font-size: 0.9rem; padding: 6px 14px; border-radius: 20px; background-color: #f0fdf4; color: #27ae60; border: 1px solid #dcfce7; transition: all 0.2s; }
     .btn-reset:active { background-color: #dcfce7; transform: scale(0.95); }
 
     .btn-icon-text { font-size: 0.8rem; padding: 6px 12px; border-radius: 8px; }
@@ -64,41 +44,30 @@
     .goal-textarea.saving { border-color: #f1c40f !important; background-color: #fff9db !important; }
     .goal-textarea.saved { border-color: #2ecc71 !important; background-color: #eafaf1 !important; }
 
-    /* 讀取與登入遮罩 */
     #loading, #login-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.98); z-index:9999; display:flex; justify-content:center; align-items:center; flex-direction: column;}
     #login-overlay { z-index: 10000; background: var(--bg-light); }
 
-    /* ================= 桌機版樣式 (大於 992px) ================= */
+    /* Footer 樣式 */
+    .home-footer { text-align: center; margin-top: 40px; margin-bottom: 20px; padding: 20px; border-top: 1px solid #eee; color: #95a5a6; font-size: 0.9rem; }
+    .btn-clear-data { border: 1px solid #fab1a0; color: #e74c3c; background: #fff; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; margin-left: 10px; transition: all 0.2s; }
+    .btn-clear-data:hover { background: #e74c3c; color: white; }
+
     @media (min-width: 992px) {
         body { padding-bottom: 0; }
-        .layout-wrapper {
-            display: grid;
-            grid-template-columns: var(--sidebar-width) 1fr;
-            min-height: 100vh;
-        }
-        .sidebar {
-            background: white; padding: 30px 20px; border-right: 1px solid #eee;
-            display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh;
-        }
+        .layout-wrapper { display: grid; grid-template-columns: var(--sidebar-width) 1fr; min-height: 100vh; }
+        .sidebar { background: white; padding: 30px 20px; border-right: 1px solid #eee; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; }
         .sidebar-brand { font-size: 1.5rem; font-weight: 800; color: var(--primary-color); margin-bottom: 40px; display: flex; align-items: center; }
         .sidebar-menu { flex-grow: 1; display: flex; flex-direction: column; gap: 10px; }
-        .sidebar-item {
-            display: flex; align-items: center; padding: 12px 18px; text-decoration: none; color: #7f8c8d; border-radius: 12px; transition: all 0.2s; font-weight: 600;
-        }
+        .sidebar-item { display: flex; align-items: center; padding: 12px 18px; text-decoration: none; color: #7f8c8d; border-radius: 12px; transition: all 0.2s; font-weight: 600; }
         .sidebar-item:hover { background-color: #f8f9fa; color: var(--primary-color); }
         .sidebar-item.active { background-color: #eaf2f8; color: #2980b9; }
         .sidebar-item i { width: 25px; font-size: 1.1rem; margin-right: 10px; }
-
         .main-content { padding: 30px 40px; overflow-y: auto; }
         .category-header { border-radius: 25px; margin-top: 0; } 
-
-        .desktop-two-col-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start;
-        }
+        .desktop-two-col-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start; }
         .nav-container { display: none !important; }
     }
 
-    /* ================= 手機版樣式 (小於 992px) ================= */
     @media (max-width: 991.98px) {
         body { padding-bottom: 130px; }
         .layout-wrapper { display: block; } 
@@ -106,7 +75,6 @@
         .main-content { padding: 0; }
         .desktop-two-col-grid { display: block; }
         .col-block { margin-bottom: 30px; }
-
         .nav-container { position: fixed; bottom: 0; left: 0; width: 100%; background: white; z-index: 1000; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
         .nav-categories-scroll { display: flex; overflow-x: auto; white-space: nowrap; padding: 10px 5px; -ms-overflow-style: none; scrollbar-width: none; border-bottom: 1px solid #f0f0f0; }
         .nav-categories-scroll::-webkit-scrollbar { display: none; }
@@ -192,11 +160,12 @@
   // ===========================================
   // 設定區
   // ===========================================
-  const API_URL = "https://script.google.com/macros/s/AKfycbwVnq_72ZvV6uIzXGUmnChvJH8UYkFUYdSHwaOQotUg4o35YL_hmbIWeM3yT9KDgWs3UQ/exec"; 
+  const API_URL = "https://script.google.com/macros/s/AKfycbyNxo_-qndGStbxkayF0bW3oKaGLwqFQZEnxfcAVMWU2mgGzv6ypJMsCn7gPZY2HObs-w/exec"; 
   // ===========================================
 
   let userToken = localStorage.getItem("google_token");
   let allData = [];
+  let lastUpdateTimestamp = 0; // 新增：儲存最後更新時間
   let currentCategory = 'Home';
   let editModal;
 
@@ -252,7 +221,11 @@
   async function loadData() {
     document.getElementById('loading').style.display = 'flex';
     const res = await callApi('getData');
-    if (res) { allData = res.items || []; renderContent(); }
+    if (res) { 
+        allData = res.items || []; 
+        lastUpdateTimestamp = res.lastUpdated || new Date().getTime(); // 儲存時間
+        renderContent(); 
+    }
     document.getElementById('loading').style.display = 'none';
   }
 
@@ -314,6 +287,20 @@
       let starred = allData.filter(d => d.isStarred && d.type !== 'Goal');
       container.innerHTML += `<div class="px-3 px-lg-0 pb-3"><div class="text-secondary fw-bold mb-3 ps-2"><i class="fa-solid fa-star text-warning me-2"></i>重點關注項目</div><div id="list-home"></div></div>`;
       renderList(document.getElementById('list-home'), starred, false);
+      
+      // --- 在首頁加入底部 Footer (上次更新 + 清除資料) ---
+      let diffDays = 0;
+      if (lastUpdateTimestamp) {
+        let diff = new Date().getTime() - lastUpdateTimestamp;
+        diffDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+      }
+      container.innerHTML += `
+        <div class="home-footer">
+            <span><i class="fa-solid fa-clock-rotate-left me-1"></i> 距離上次更新藍圖已過 ${diffDays} 天</span>
+            <button class="btn btn-clear-data" onclick="resetAccount()"><i class="fa-solid fa-trash-can me-1"></i>重置資料</button>
+        </div>
+      `;
+      // ------------------------------------------------
     } else {
       let reminders = allData.filter(d => d.category === currentCategory && d.type === 'Reminder');
       let todos = allData.filter(d => d.category === currentCategory && d.type === 'Todo');
@@ -346,35 +333,18 @@
     
     el.innerHTML = items.map(item => {
       let daysHtml = '';
-      
-      // 計算天數邏輯
       if(item.type === 'Reminder' && item.dateValue) {
         let today = new Date();
-        today.setHours(0,0,0,0); // 正規化今天時間
+        today.setHours(0,0,0,0);
         let target = new Date(item.dateValue);
         target.setHours(0,0,0,0);
-        
-        // 算出天數差距
         let diff = Math.floor((today - target) / (1000*60*60*24));
         
-        let badgeClass = '';
-        let badgeText = '';
-
-        if (diff > 0) {
-            // 過去日期 (已過 XX 天)
-            badgeClass = diff > 30 ? 'overdue' : '';
-            badgeText = `已過 ${diff} 天`;
-        } else if (diff < 0) {
-            // 未來日期 (還有 XX 天)
-            badgeClass = 'future';
-            badgeText = `還有 ${Math.abs(diff)} 天`;
-        } else {
-            // 今天
-            badgeClass = 'today';
-            badgeText = '就是今天';
-        }
+        let badgeClass = '', badgeText = '';
+        if (diff > 0) { badgeClass = diff > 30 ? 'overdue' : ''; badgeText = `已過 ${diff} 天`; }
+        else if (diff < 0) { badgeClass = 'future'; badgeText = `還有 ${Math.abs(diff)} 天`; }
+        else { badgeClass = 'today'; badgeText = '就是今天'; }
         
-        // 顯示：天數Badge + 重置按鈕
         daysHtml = `
             <div class="d-flex align-items-center">
                 <span class="days-badge ${badgeClass}">${badgeText}</span>
@@ -384,7 +354,6 @@
             </div>
         `;
       }
-
       return `
         <div class="card item-row ${item.isDone?'opacity-50':''}" data-id="${item.id}">
           <div class="item-top-row">
@@ -407,7 +376,7 @@
     el.classList.add('saving');
     const res = await callApi('saveTopGoal', { category: currentCategory, content: el.value }); 
     if(res) {
-        allData = res.items; 
+        allData = res.items; lastUpdateTimestamp = res.lastUpdated; // 更新時間
         el.classList.remove('saving');
         el.classList.add('saved');
         document.getElementById('save-status-text').style.opacity = '1';
@@ -420,20 +389,29 @@
 
   async function updateField(id, field, val) {
     let item = allData.find(d => d.id == id); if(item) { item[field] = val; renderContent(); }
-    const res = await callApi('updateItem', { id: id, field: field, value: val }); if(res) allData = res.items;
+    const res = await callApi('updateItem', { id: id, field: field, value: val }); if(res) { allData = res.items; lastUpdateTimestamp = res.lastUpdated; }
   }
   
-  // 重置日期為今天
   async function resetReminderDate(id) {
     document.getElementById('loading').style.display = 'flex';
-    // 取得今天日期 YYYY-MM-DD
-    let today = new Date();
-    today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
-    let dateStr = today.toISOString().slice(0,10);
+    let today = new Date(); today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+    const res = await callApi('updateItem', { id: id, field: 'dateValue', value: today.toISOString().slice(0,10) });
+    if(res) { allData = res.items; lastUpdateTimestamp = res.lastUpdated; renderContent(); }
+    document.getElementById('loading').style.display = 'none';
+  }
+
+  // --- 重置帳號資料 ---
+  async function resetAccount() {
+    if(!confirm("【警告】\n確定要刪除所有資料並重置嗎？\n\n這將會：\n1. 刪除您所有的目標、待辦與提醒\n2. 重新載入系統預設的範例資料\n\n此動作無法復原！")) return;
     
-    // 呼叫 API 更新
-    const res = await callApi('updateItem', { id: id, field: 'dateValue', value: dateStr });
-    if(res) { allData = res.items; renderContent(); }
+    document.getElementById('loading').style.display = 'flex';
+    const res = await callApi('resetData');
+    if(res) { 
+        allData = res.items; 
+        lastUpdateTimestamp = res.lastUpdated; 
+        renderContent(); 
+        alert("資料已重置為預設狀態！");
+    }
     document.getElementById('loading').style.display = 'none';
   }
 
@@ -472,14 +450,14 @@
         if(payload.type === 'Reminder') res = await callApi('updateItem', { id: id, field: 'dateValue', value: payload.dateValue });
         else res = await callApi('getData');
     } else res = await callApi('addItem', { item: payload });
-    if(res) { allData = res.items; renderContent(); }
+    if(res) { allData = res.items; lastUpdateTimestamp = res.lastUpdated; renderContent(); }
     document.getElementById('loading').style.display = 'none';
   }
   async function deleteEdit() {
     if(!confirm('確認刪除此項目？')) return;
     document.getElementById('loading').style.display = 'flex'; editModal.hide();
     const res = await callApi('deleteItem', { id: document.getElementById('editId').value });
-    if(res) { allData = res.items; renderContent(); }
+    if(res) { allData = res.items; lastUpdateTimestamp = res.lastUpdated; renderContent(); }
     document.getElementById('loading').style.display = 'none';
   }
 </script>
