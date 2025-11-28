@@ -28,13 +28,38 @@
     .star-btn.active { color: #f1c40f; filter: drop-shadow(0 1px 2px rgba(241, 196, 15, 0.3)); }
     .strikethrough { text-decoration: line-through; color: #bdc3c7; }
     .opacity-50 { opacity: 0.5; }
-    .days-badge { font-size: 0.75rem; padding: 5px 12px; border-radius: 20px; background: #ecf0f1; color: #7f8c8d; font-weight: 600; display: inline-flex; align-items: center;}
-    .days-badge.overdue { background: #fadbd8; color: #c0392b; }
+    
+    /* --- 優化後的天數與按鈕樣式 --- */
+    .days-badge { 
+        font-size: 0.9rem; /* 字體放大 */
+        padding: 6px 14px; /* 按鈕加大 */
+        border-radius: 20px; 
+        background: #ecf0f1; 
+        color: #7f8c8d; 
+        font-weight: 600; 
+        display: inline-flex; 
+        align-items: center;
+        margin-right: 10px;
+    }
+    .days-badge.overdue { background: #fadbd8; color: #c0392b; } /* 過期很久 (紅) */
+    .days-badge.future { background: #e8f6f3; color: #16a085; } /* 未來 (藍綠) */
+    .days-badge.today { background: #d4efdf; color: #27ae60; } /* 今天 (綠) */
+    
+    .btn-reset {
+        font-size: 0.9rem; /* 字體放大 */
+        padding: 6px 14px; /* 按鈕加大 */
+        border-radius: 20px;
+        background-color: #f0fdf4;
+        color: #27ae60;
+        border: 1px solid #dcfce7;
+        transition: all 0.2s;
+    }
+    .btn-reset:active { background-color: #dcfce7; transform: scale(0.95); }
+
     .btn-icon-text { font-size: 0.8rem; padding: 6px 12px; border-radius: 8px; }
     .category-header { padding: 25px; background: white; margin-bottom: 20px; border-radius: 0 0 25px 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
     .form-control:focus { box-shadow: none; border-color: #bdc3c7; }
     
-    /* 目標輸入框的儲存狀態樣式 */
     .goal-textarea { transition: border-color 0.3s, background-color 0.3s; border: 1px solid transparent; }
     .goal-textarea.saving { border-color: #f1c40f !important; background-color: #fff9db !important; }
     .goal-textarea.saved { border-color: #2ecc71 !important; background-color: #eafaf1 !important; }
@@ -277,7 +302,6 @@
     let goal = allData.find(d => d.category === currentCategory && d.type === 'Goal')?.content || '';
     let headerIcon = currentCategory === 'Home' ? 'fa-earth-americas' : catInfo.icon;
     
-    // 這裡加上了 class "goal-textarea" 以便控制儲存時的顏色變化
     let headerHtml = `
       <div class="category-header">
         <h4 class="mb-4 text-dark fw-bolder"><i class="fa-solid ${headerIcon} me-3 text-primary"></i>${catInfo.name}目標</h4>
@@ -321,11 +345,46 @@
     if(!items.length) { el.innerHTML = '<div class="text-center text-muted py-5 opacity-50"><i class="fa-solid fa-inbox fa-3x mb-3"></i><br>暫無項目</div>'; return; }
     
     el.innerHTML = items.map(item => {
-      let daysBadge = '';
+      let daysHtml = '';
+      
+      // 計算天數邏輯
       if(item.type === 'Reminder' && item.dateValue) {
-        let diff = Math.floor((new Date() - new Date(item.dateValue))/(1000*60*60*24));
-        daysBadge = `<span class="days-badge ${diff>30?'overdue':''}"><i class="fa-regular fa-clock me-1"></i>${diff}天</span>`;
+        let today = new Date();
+        today.setHours(0,0,0,0); // 正規化今天時間
+        let target = new Date(item.dateValue);
+        target.setHours(0,0,0,0);
+        
+        // 算出天數差距
+        let diff = Math.floor((today - target) / (1000*60*60*24));
+        
+        let badgeClass = '';
+        let badgeText = '';
+
+        if (diff > 0) {
+            // 過去日期 (已過 XX 天)
+            badgeClass = diff > 30 ? 'overdue' : '';
+            badgeText = `已過 ${diff} 天`;
+        } else if (diff < 0) {
+            // 未來日期 (還有 XX 天)
+            badgeClass = 'future';
+            badgeText = `還有 ${Math.abs(diff)} 天`;
+        } else {
+            // 今天
+            badgeClass = 'today';
+            badgeText = '就是今天';
+        }
+        
+        // 顯示：天數Badge + 重置按鈕
+        daysHtml = `
+            <div class="d-flex align-items-center">
+                <span class="days-badge ${badgeClass}">${badgeText}</span>
+                <button class="btn btn-reset shadow-sm" onclick="resetReminderDate('${item.id}')" title="重置為今天">
+                    <i class="fa-solid fa-rotate-left me-1"></i>重置
+                </button>
+            </div>
+        `;
       }
+
       return `
         <div class="card item-row ${item.isDone?'opacity-50':''}" data-id="${item.id}">
           <div class="item-top-row">
@@ -335,8 +394,8 @@
             <div class="item-content-text ${item.isDone?'strikethrough':''}">${item.content}</div>
           </div>
           <div class="item-bottom-row">
-             <div>${daysBadge}</div>
-             <button class="btn btn-icon-text bg-light text-secondary shadow-sm" onclick="openEditModal('${item.id}')"><i class="fa-solid fa-pen me-1"></i>編輯</button>
+             <div>${daysHtml}</div>
+             <button class="btn btn-icon-text bg-light text-secondary shadow-sm ms-auto" onclick="openEditModal('${item.id}')"><i class="fa-solid fa-pen me-1"></i>編輯</button>
           </div>
         </div>`;
     }).join('');
@@ -344,24 +403,14 @@
     if(sortable) new Sortable(el, { handle: '.drag-handle', animation: 150, ghostClass: 'bg-light', onEnd: saveOrder });
   }
 
-  // --- 修正後的目標儲存功能 ---
   async function saveTopGoal(el) { 
-    // 1. 視覺回饋：變黃色
     el.classList.add('saving');
-    
-    // 2. 呼叫 API
     const res = await callApi('saveTopGoal', { category: currentCategory, content: el.value }); 
-    
-    // 3. 處理結果
     if(res) {
-        allData = res.items; // 關鍵：更新本地資料，這樣切換頁面文字才不會不見
-        
-        // 視覺回饋：變綠色 + 顯示「已儲存」
+        allData = res.items; 
         el.classList.remove('saving');
         el.classList.add('saved');
         document.getElementById('save-status-text').style.opacity = '1';
-        
-        // 1秒後恢復原狀
         setTimeout(() => {
             el.classList.remove('saved');
             document.getElementById('save-status-text').style.opacity = '0';
@@ -373,6 +422,21 @@
     let item = allData.find(d => d.id == id); if(item) { item[field] = val; renderContent(); }
     const res = await callApi('updateItem', { id: id, field: field, value: val }); if(res) allData = res.items;
   }
+  
+  // 重置日期為今天
+  async function resetReminderDate(id) {
+    document.getElementById('loading').style.display = 'flex';
+    // 取得今天日期 YYYY-MM-DD
+    let today = new Date();
+    today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+    let dateStr = today.toISOString().slice(0,10);
+    
+    // 呼叫 API 更新
+    const res = await callApi('updateItem', { id: id, field: 'dateValue', value: dateStr });
+    if(res) { allData = res.items; renderContent(); }
+    document.getElementById('loading').style.display = 'none';
+  }
+
   async function saveOrder() {
     let ids = []; document.querySelectorAll('.item-row').forEach(el => ids.push(el.getAttribute('data-id')));
     await callApi('updateOrder', { ids: ids });
@@ -421,5 +485,3 @@
 </script>
 </body>
 </html>
-
-
