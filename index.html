@@ -40,25 +40,15 @@
 
     /* ================= 桌機版樣式 (大於 992px) ================= */
     @media (min-width: 992px) {
-        body { padding-bottom: 0; } /* 桌機版不需要底部留白 */
-        
-        /* 整體佈局容器 */
+        body { padding-bottom: 0; }
         .layout-wrapper {
             display: grid;
-            grid-template-columns: var(--sidebar-width) 1fr; /* 左側邊欄 + 右側內容 */
+            grid-template-columns: var(--sidebar-width) 1fr;
             min-height: 100vh;
         }
-
-        /* 左側邊欄 */
         .sidebar {
-            background: white;
-            padding: 30px 20px;
-            border-right: 1px solid #eee;
-            display: flex;
-            flex-direction: column;
-            position: sticky;
-            top: 0;
-            height: 100vh;
+            background: white; padding: 30px 20px; border-right: 1px solid #eee;
+            display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh;
         }
         .sidebar-brand { font-size: 1.5rem; font-weight: 800; color: var(--primary-color); margin-bottom: 40px; display: flex; align-items: center; }
         .sidebar-menu { flex-grow: 1; display: flex; flex-direction: column; gap: 10px; }
@@ -69,32 +59,24 @@
         .sidebar-item.active { background-color: #eaf2f8; color: #2980b9; }
         .sidebar-item i { width: 25px; font-size: 1.1rem; margin-right: 10px; }
 
-        /* 右側主內容區 */
         .main-content { padding: 30px 40px; overflow-y: auto; }
-        .category-header { border-radius: 25px; margin-top: 0; } /* 桌機版 Header 圓角 */
+        .category-header { border-radius: 25px; margin-top: 0; } 
 
-        /* 桌機版內容雙欄排列 (用於非首頁) */
         .desktop-two-col-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr; /* 左右兩欄 */
-            gap: 30px;
-            align-items: start;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start;
         }
-
-        /* 隱藏手機版底部導覽 */
         .nav-container { display: none !important; }
     }
 
     /* ================= 手機版樣式 (小於 992px) ================= */
     @media (max-width: 991.98px) {
         body { padding-bottom: 130px; }
-        .layout-wrapper { display: block; } /* 手機版改為單欄 */
-        .sidebar { display: none; } /* 隱藏側邊欄 */
+        .layout-wrapper { display: block; } 
+        .sidebar { display: none; }
         .main-content { padding: 0; }
-        .desktop-two-col-grid { display: block; } /* 手機版取消雙欄格線，改為堆疊 */
-        .col-block { margin-bottom: 30px; } /* 手機版區塊間距 */
+        .desktop-two-col-grid { display: block; }
+        .col-block { margin-bottom: 30px; }
 
-        /* 底部導覽列 */
         .nav-container { position: fixed; bottom: 0; left: 0; width: 100%; background: white; z-index: 1000; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
         .nav-categories-scroll { display: flex; overflow-x: auto; white-space: nowrap; padding: 10px 5px; -ms-overflow-style: none; scrollbar-width: none; border-bottom: 1px solid #f0f0f0; }
         .nav-categories-scroll::-webkit-scrollbar { display: none; }
@@ -131,17 +113,14 @@
   </div>
 
   <div class="layout-wrapper">
-      
       <nav class="sidebar">
           <div class="sidebar-brand">
               <i class="fa-solid fa-rocket me-3 text-primary"></i>夢想藍圖
           </div>
-          <div class="sidebar-menu" id="sidebar-menu-container">
-              </div>
+          <div class="sidebar-menu" id="sidebar-menu-container"></div>
       </nav>
 
-      <main class="main-content" id="app-content">
-          </main>
+      <main class="main-content" id="app-content"></main>
   </div>
 
   <div class="nav-container">
@@ -181,10 +160,9 @@
 
 <script>
   // ===========================================
-  // 設定區 (請修改這裡)
+  // 設定區 (已填入你的資料)
   // ===========================================
-  const API_URL = "https://script.google.com/macros/s/AKfycbyP482eL57B-4AVECqq4cmU6nw5s_f6V1fzhWoXB9-ItvLwQuWg-zcqHkXs-0jYm2fGVg/exec"; 
-  // 記得也要修改 HTML 上方 data-client_id 的值
+  const API_URL = "https://script.google.com/macros/s/AKfycbxAScOvdlhsnm6imsHNlVtJgFVwbhbvKszVbPmp1zhfAL6eta8zs_hfMnxAEBTr8AU-Sg/exec"; 
   // ===========================================
 
   let userToken = localStorage.getItem("google_token");
@@ -204,7 +182,7 @@
   const CATEGORY_HOME = { id: 'Home', name: '首頁總覽', icon: 'fa-house' };
 
   window.onload = function() {
-    renderNavbar(); // 同時渲染手機底部和桌機側邊欄
+    renderNavbar();
     editModal = new bootstrap.Modal(document.getElementById('editModal'));
     document.getElementById('btnSave').onclick = saveEdit;
     document.getElementById('btnDelete').onclick = deleteEdit;
@@ -243,14 +221,14 @@
 
   async function loadData() {
     document.getElementById('loading').style.display = 'flex';
+    // 前端發送 getData 請求
     const res = await callApi('getData');
     if (res) { allData = res.items || []; renderContent(); }
     document.getElementById('loading').style.display = 'none';
   }
 
-  // --- UI 渲染 (同時處理桌機與手機導覽) ---
+  // --- UI 渲染 ---
   function renderNavbar() {
-    // 1. 渲染手機底部導覽
     const navScroll = document.getElementById('nav-categories');
     navScroll.innerHTML = DOMAINS.map(cat => `
       <a href="javascript:void(0)" class="nav-cat-item ${cat.id === currentCategory ? 'active' : ''}" onclick="switchCategory('${cat.id}')">
@@ -265,7 +243,6 @@
       btnHome.classList.remove('active'); btnHome.innerHTML = '<i class="fa-solid fa-house me-2"></i> 回首頁';
     }
 
-    // 2. 渲染桌機側邊欄導覽
     const sidebarMenu = document.getElementById('sidebar-menu-container');
     let sidebarHtml = `
         <a href="javascript:void(0)" class="sidebar-item ${currentCategory === 'Home' ? 'active' : ''} mb-3" onclick="switchCategory('Home')">
@@ -284,11 +261,10 @@
   function switchCategory(id) {
     currentCategory = id;
     renderNavbar();
-    if(window.innerWidth < 992) window.scrollTo(0,0); // 手機版切換時滾動到頂部
+    if(window.innerWidth < 992) window.scrollTo(0,0);
     renderContent();
   }
 
-  // --- 核心內容渲染 (支援桌機雙欄) ---
   function renderContent() {
     const container = document.getElementById('app-content');
     container.innerHTML = '';
@@ -297,7 +273,6 @@
     let goal = allData.find(d => d.category === currentCategory && d.type === 'Goal')?.content || '';
     let headerIcon = currentCategory === 'Home' ? 'fa-earth-americas' : catInfo.icon;
     
-    // Header 區域
     let headerHtml = `
       <div class="category-header">
         <h4 class="mb-4 text-dark fw-bolder"><i class="fa-solid ${headerIcon} me-3 text-primary"></i>${catInfo.name}目標</h4>
@@ -305,14 +280,11 @@
       </div>`;
     container.innerHTML = headerHtml;
 
-    // 列表內容區域
     if (currentCategory === 'Home') {
-      // 首頁維持單欄
       let starred = allData.filter(d => d.isStarred && d.type !== 'Goal');
       container.innerHTML += `<div class="px-3 px-lg-0 pb-3"><div class="text-secondary fw-bold mb-3 ps-2"><i class="fa-solid fa-star text-warning me-2"></i>重點關注項目</div><div id="list-home"></div></div>`;
       renderList(document.getElementById('list-home'), starred, false);
     } else {
-      // 其他頁面：使用 desktop-two-col-grid 在桌機版分雙欄
       let reminders = allData.filter(d => d.category === currentCategory && d.type === 'Reminder');
       let todos = allData.filter(d => d.category === currentCategory && d.type === 'Todo');
       
@@ -366,7 +338,6 @@
     if(sortable) new Sortable(el, { handle: '.drag-handle', animation: 150, ghostClass: 'bg-light', onEnd: saveOrder });
   }
 
-  // --- Actions (保持不變) ---
   async function saveTopGoal(el) { await callApi('saveTopGoal', { category: currentCategory, content: el.value }); }
   async function updateField(id, field, val) {
     let item = allData.find(d => d.id == id); if(item) { item[field] = val; renderContent(); }
@@ -377,7 +348,6 @@
     await callApi('updateOrder', { ids: ids });
   }
   
-  // --- Modals (保持不變，僅微調樣式) ---
   function openAddModal(type) {
     document.getElementById('modalTitle').innerText = type === 'Reminder' ? '新增提醒' : '新增待辦';
     document.getElementById('editId').value = ''; document.getElementById('editType').value = type;
